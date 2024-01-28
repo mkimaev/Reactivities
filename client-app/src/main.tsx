@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom/client'
 import 'semantic-ui-css/semantic.min.css'
 import App from './app/layout/App.tsx'
 import './app/layout/styles.css'
+import React from 'react'
+import { StoreContext, store } from './app/stores/store.ts'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <React.StrictMode>
-     <App />
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <StoreContext.Provider value={store} >
+      <App />
+     </StoreContext.Provider>
+  </React.StrictMode>,
 )
