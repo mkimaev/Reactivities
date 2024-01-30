@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Core;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -12,7 +13,7 @@ namespace Application.Activities
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity Activity { get; set; }
         }
@@ -24,7 +25,7 @@ namespace Application.Activities
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext dataContext;
 
@@ -33,10 +34,17 @@ namespace Application.Activities
                 this.dataContext = dataContext;
             }
 
-			async Task IRequestHandler<Command>.Handle(Command request, CancellationToken cancellationToken)
+			async Task<Result<Unit>> IRequestHandler<Command, Result<Unit>>.Handle(Command request, CancellationToken cancellationToken)
 			{
 				dataContext.Activities.Add(request.Activity);
-				await dataContext.SaveChangesAsync();
+				var result = await dataContext.SaveChangesAsync() > 0;
+
+                if (!result)
+                {
+                    return Result<Unit>.Failure("Failed to create activity");
+                }
+                
+                return Result<Unit>.Success(Unit.Value);
 			}
 		}
     }
