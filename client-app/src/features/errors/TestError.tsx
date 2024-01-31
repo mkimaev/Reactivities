@@ -2,7 +2,6 @@ import {Button, Header, Segment} from "semantic-ui-react";
 import axios from 'axios';
 import { useState } from "react";
 import ValidationError from "./ValidationError";
-import { set } from "mobx";
 
 export default function TestErrors() {
     const baseUrl = 'http://localhost:5000/api/';
