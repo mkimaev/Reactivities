@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace API.Controllers
 	public class AccountController : ControllerBase
 	{
 		private readonly UserManager<AppUser> userManager;
+		private readonly TokenService tokenService;
 
-		public AccountController(UserManager<AppUser> userManager)
+		public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
         {
 			this.userManager = userManager;
+			this.tokenService = tokenService;
 		}
 
 		[HttpPost("login")]
@@ -34,7 +37,7 @@ namespace API.Controllers
 				{
 					DisplayName = user.DisplayName,
 					Image = null,
-					Token = "this will be a token",
+					Token = tokenService.CreateToken(user),
 					Username = user.UserName
 				};
 			}
