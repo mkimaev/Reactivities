@@ -8,9 +8,10 @@ using Persistence;
 
 namespace API.Controllers
 {
-    public class ActivitiesController : BaseApiController
+	[AllowAnonymous]
+	public class ActivitiesController : BaseApiController
     {
-
+        
         public ActivitiesController()
         {
         }
