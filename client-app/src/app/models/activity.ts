@@ -16,6 +16,11 @@ export interface Activity {
     attendees: Profile[];
 }
 
+export class Activity implements Activity {
+    constructor(init?: ActivityFormValues){
+        Object.assign(this, init);
+    }
+}
 
 export class ActivityFormValues {
     id?: string = undefined;
