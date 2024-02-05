@@ -8,7 +8,6 @@ using Persistence;
 
 namespace API.Controllers
 {
-	[AllowAnonymous]
 	public class ActivitiesController : BaseApiController
     {
         
@@ -19,7 +18,8 @@ namespace API.Controllers
         [HttpGet] //api/activities
         public async Task<ActionResult<List<Activity>>> GetAcitivties()
         {
-            return await Mediator.Send(new List.Query());
+            
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}")] //api/acitivities/id
