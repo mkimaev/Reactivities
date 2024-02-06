@@ -4,7 +4,7 @@ import ProfileContent from "./ProfileContent";
 import { observer } from "mobx-react-lite";
 import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
 
@@ -28,8 +28,12 @@ export default observer(function ProfilePage() {
     return (
         <Grid>
             <Grid.Column width={16}>
-                {profile && <ProfileHeader profile={profile} />}
-                <ProfileContent />
+                {profile && 
+                    <Fragment>
+                        <ProfileHeader profile={profile} />
+                        <ProfileContent profile={profile} />
+                    </Fragment>    
+                }
             </Grid.Column>
         </Grid>
     )
