@@ -22,13 +22,13 @@ export default class ActivityStore {
         )
     }
 
-    get groupedActivities(){
+    get groupedActivities() {
         return Object.entries(
             this.activitiesByDate.reduce((activities, activity) => {
                 const date = format(activity.date!, 'dd MMM yyyy');
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
                 return activities;
-            }, {} as {[key: string]: Activity[]})
+            }, {} as { [key: string]: Activity[] })
         )
     }
 
@@ -67,7 +67,7 @@ export default class ActivityStore {
                 runInAction(() => {
                     this.selectedActivity = activity;
                 })
-                
+
                 this.setLoadingInitial(false);
                 return activity;
             } catch (error) {
@@ -102,7 +102,7 @@ export default class ActivityStore {
 
     createActivity = async (activity: ActivityFormValues) => {
         const user = store.userStore.user;
-        const attendee = new Profile(user!); 
+        const attendee = new Profile(user!);
         try {
             await agent.Activities.create(activity);
             const newActivity = new Activity(activity);
@@ -122,8 +122,8 @@ export default class ActivityStore {
         try {
             await agent.Activities.update(activity);
             runInAction(() => {
-                if(activity.id){
-                    const updatedActivity = {...this.getActivity(activity.id), ...activity};
+                if (activity.id) {
+                    const updatedActivity = { ...this.getActivity(activity.id), ...activity };
                     this.activityRegistry.set(activity.id!, updatedActivity as Activity);
                     this.selectedActivity = updatedActivity as Activity;
                 }
@@ -178,17 +178,17 @@ export default class ActivityStore {
         this.loading = true;
         try {
             await agent.Activities.attend(this.selectedActivity!.id);
-            runInAction(()=>{
+            runInAction(() => {
                 this.selectedActivity!.isCancelled = !this.selectedActivity?.isCancelled;
                 this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!);
 
             })
-            
+
         } catch (error) {
             console.log(error);
         }
-        finally{
-            runInAction(()=>{
+        finally {
+            runInAction(() => {
                 this.loading = false;
             })
         }
@@ -196,6 +196,17 @@ export default class ActivityStore {
 
     clearSelectedActivity = () => {
         this.selectedActivity = undefined;
+    }
+
+    updateAttendeeFollowing = (username: string) => {
+        this.activityRegistry.forEach(activity => {
+            activity.attendees.forEach(attendee => {
+                if (attendee.username == username) {
+                    attendee.following ? attendee.followersCount-- : attendee.followersCount++;
+                    attendee.following = !attendee.following;
+                }
+            })
+        })
     }
 }
 
