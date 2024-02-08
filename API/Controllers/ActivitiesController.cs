@@ -1,11 +1,7 @@
 using Application.Activities;
-using Application.Core;
 using Domain;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
@@ -17,7 +13,7 @@ namespace API.Controllers
 		}
 
 		[HttpGet] //api/activities
-		public async Task<ActionResult<List<Activity>>> GetAcitivties([FromQuery] PaginParams param)
+		public async Task<ActionResult<List<Activity>>> GetAcitivties([FromQuery] ActivityParams param)
 		{
 			return HandlePagedResult(await Mediator.Send(new List.Query { Params = param }));
 		}
