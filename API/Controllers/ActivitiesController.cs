@@ -1,4 +1,5 @@
 using Application.Activities;
+using Application.Core;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,49 +10,48 @@ using Persistence;
 namespace API.Controllers
 {
 	public class ActivitiesController : BaseApiController
-    {
-        
-        public ActivitiesController()
-        {
-        }
+	{
 
-        [HttpGet] //api/activities
-        public async Task<ActionResult<List<Activity>>> GetAcitivties()
-        {
-            
-            return HandleResult(await Mediator.Send(new List.Query()));
-        }
+		public ActivitiesController()
+		{
+		}
 
-        [HttpGet("{id}")] //api/acitivities/id
-        public async Task<IActionResult> GetActivity(Guid id)
-        {
-            var result = await Mediator.Send(new Details.Query { Id = id });
-            return HandleResult(result);
-        }
+		[HttpGet] //api/activities
+		public async Task<ActionResult<List<Activity>>> GetAcitivties([FromQuery] PaginParams param)
+		{
+			return HandlePagedResult(await Mediator.Send(new List.Query { Params = param }));
+		}
 
-        [HttpPost] //api/acitivities/
-        public async Task<IActionResult> CreateActivity(Activity activity)
-        {
-            var result = await Mediator.Send(new Create.Command { Activity = activity });
-            return HandleResult(result);
-        }
+		[HttpGet("{id}")] //api/acitivities/id
+		public async Task<IActionResult> GetActivity(Guid id)
+		{
+			var result = await Mediator.Send(new Details.Query { Id = id });
+			return HandleResult(result);
+		}
 
-        [Authorize(Policy = "IsActivityHost")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditActivity(Guid id, Activity activity)
-        {
-            activity.Id = id;
-            var result = await Mediator.Send(new Edit.Command { Activity = activity });
-            return HandleResult(result);
-        }
+		[HttpPost] //api/acitivities/
+		public async Task<IActionResult> CreateActivity(Activity activity)
+		{
+			var result = await Mediator.Send(new Create.Command { Activity = activity });
+			return HandleResult(result);
+		}
+
+		[Authorize(Policy = "IsActivityHost")]
+		[HttpPut("{id}")]
+		public async Task<IActionResult> EditActivity(Guid id, Activity activity)
+		{
+			activity.Id = id;
+			var result = await Mediator.Send(new Edit.Command { Activity = activity });
+			return HandleResult(result);
+		}
 
 		[Authorize(Policy = "IsActivityHost")]
 		[HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteActivity(Guid id)
-        {
-            var result = await Mediator.Send(new Delete.CommandDelete { Id = id });
-            return HandleResult(result);
-        }
+		public async Task<IActionResult> DeleteActivity(Guid id)
+		{
+			var result = await Mediator.Send(new Delete.CommandDelete { Id = id });
+			return HandleResult(result);
+		}
 
 		[HttpPost("{id}/attend")] //api/acitivities/
 		public async Task<IActionResult> Attend(Guid id)
